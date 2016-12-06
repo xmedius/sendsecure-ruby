@@ -19,7 +19,7 @@ module SendSecure
       end
 
       def contact_methods
-        @contact_methods || []
+        @contact_methods ||= []
       end
 
     end

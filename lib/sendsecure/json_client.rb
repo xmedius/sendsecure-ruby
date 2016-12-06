@@ -19,10 +19,10 @@
     end
 
     # GET
-    def self.get_user_token(enterprise_account, username, password, endpoint = "https://portal.xmedius.com", one_time_password = "")
+    def self.get_user_token(enterprise_account, username, password, device_id, device_name, application_type = "sendsecure-ruby", endpoint = "https://portal.xmedius.com", one_time_password = "")
       begin
         response = Faraday.post("#{endpoint}/api/user_token", permalink: enterprise_account, username: username, password: password,
-                      otp: one_time_password, application_type: "Sendsecure Ruby", device_id: "device_id", device_name: "systemtest")
+                      otp: one_time_password, application_type: application_type, device_id: device_id, device_name: device_name)
       rescue Faraday::Error::ResourceNotFound
         raise SendSecureException.new("not found", "404")
       rescue Faraday::Error => e
@@ -45,15 +45,8 @@
 
     # POST
     def upload_file(upload_url, filename_or_io, content_type, filename = nil)
-      fileserver_connection = handle_connection_error do
-        Faraday.new(url: upload_url) do |conn|
-          conn.request :multipart
-          conn.response :json, content_type: /\bjson$/
-          conn.adapter Faraday.default_adapter
-        end
-      end
       handle_error do
-        fileserver_connection.post do |req|
+        fileserver_connection(upload_url).post do |req|
           req.body = { file: UploadIO.new(filename_or_io, content_type, filename) }
         end
       end
@@ -88,6 +81,14 @@
           conn.response :json, content_type: /\bjson$/
           conn.adapter Faraday.default_adapter
         end
+      end
+    end
+
+    def fileserver_connection(upload_url)
+      Faraday.new(url: upload_url) do |conn|
+        conn.request :multipart
+        conn.response :json, content_type: /\bjson$/
+        conn.adapter Faraday.default_adapter
       end
     end
 

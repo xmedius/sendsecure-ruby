@@ -24,6 +24,7 @@ module SendSecure
                     :reply_enabled, # Value
                     :group_replies, # Value
                     :double_encryption, # Value
+                    :retention_period_type, # Value
                     :retention_period_value, # Value
                     :retention_period_unit # Value
 

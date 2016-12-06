@@ -39,25 +39,16 @@ module SendSecure
       end
 
       def attachments
-        @attachments || []
+        @attachments ||= []
       end
 
       def recipients
-        @recipients || []
+        @recipients ||= []
       end
 
-      def to_hash
-        hash = {}
-        self.instance_variables.each do |var|
-          key = var.to_s.delete "@"
-          if key == "attachments"
-            hash["document_ids"] = self.attachments.map { |a| a.guid }
-          elsif key == "recipients"
-            hash[key] = self.recipients.map { |r| r.to_hash }
-          else
-            hash[key] = self.instance_variable_get var
-          end
-        end
+      def to_hash(ignored_keys = [])
+        hash = super(ignored_keys << "attachments")
+        hash["document_ids"] = self.attachments.map { |a| a.guid }
         hash
       end
 

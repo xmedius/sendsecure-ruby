@@ -6,8 +6,8 @@ module SendSecure
     # Class method used to authenticate the user
     # enterprise_account: permalink of the enterprise
     # endpoint: the host of the portal (.com ou .eu), defaults to .com
-    def self.get_user_token(enterprise_account, username, password, endpoint = "https://portal.xmedius.com", one_time_password = "")
-      JsonClient.get_user_token(enterprise_account, username, password, endpoint, one_time_password)
+    def self.get_user_token(enterprise_account, username, password, device_id, device_name, application_type = "sendsecure-ruby", endpoint = "https://portal.xmedius.com", one_time_password = "")
+      JsonClient.get_user_token(enterprise_account, username, password, device_id, device_name, application_type, endpoint, one_time_password)
     end
 
     # enterprise_account: permalink of the enterprise
@@ -16,16 +16,10 @@ module SendSecure
       @json_client = JsonClient.new(api_token, enterprise_account, endpoint, locale)
     end
 
-    # User is authenticated inside the method
-    def initialize(enterprise_account, username, password, endpoint = "https://portal.xmedius.com", locale = "en", one_time_password = "")
-      api_token = Client.get_user_token(enterprise_account, username, password, endpoint, one_time_password)
-      @json_client = JsonClient.new(api_token, enterprise_account, endpoint, locale)
-    end
-
     # Finalize the safebox if needed and commit it
     # safebox: Safebox object
     def commit_safebox(safebox)
-      finalize_safebox(safebox) if (safebox.guid.nil? || safebox.attachments.select { |a| a.guid.nil? }.size > 0)
+      finalize_safebox(safebox) if (safebox.guid.nil? || safebox.security_profile_id.nil? || safebox.attachments.select { |a| a.guid.nil? }.size > 0)
       @json_client.commit_safebox(safebox.to_json)
     end
 
@@ -33,7 +27,12 @@ module SendSecure
     # upload the attachments, and assign a default security profile
     # safebox: Safebox object
     def finalize_safebox(safebox)
-      initialize_safebox(safebox)
+      if safebox.guid.nil?
+        result = @json_client.new_safebox(safebox.user_email)
+        safebox.guid = result["guid"]
+        safebox.public_encryption_key = result["public_encryption_key"]
+        safebox.upload_url = result["upload_url"]
+      end
 
       safebox.attachments.each do |attachment|
         self.upload_attachment(safebox, attachment)
@@ -45,15 +44,9 @@ module SendSecure
       end
     end
 
-    # Get a guid, public_encryption_key and upload URL for the safebox
-    # safebox: Safebox object
-    def initialize_safebox(safebox)
-      if safebox.guid.nil?
-        result = @json_client.new_safebox(safebox.user_email)
-        safebox.guid = result["guid"]
-        safebox.public_encryption_key = result["public_encryption_key"]
-        safebox.upload_url = result["upload_url"]
-      end
+    # Create a new SafeBox with a guid, public_encryption_key and upload URL
+    def new_safebox(user_email)
+      SendSecure::SafeBox.new(@json_client.new_safebox(user_email))
     end
 
     # Get a guid for the attachment
@@ -70,7 +63,7 @@ module SendSecure
 
     #return a SecurityProfile
     def default_security_profile(user_email)
-      security_profiles(user_email).select { |s| s.id == self.enterprise_setting.default_security_profile_id }
+      self.security_profiles(user_email).select { |s| s.id == self.enterprise_settings.default_security_profile_id }.first
     end
 
     # return list of SecurityProfile
