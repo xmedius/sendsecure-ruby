@@ -26,14 +26,14 @@ describe SendSecure::JsonClient do
     end
   end
 
-  context "new_safebox" do
+  context "initialize_safebox" do
 
     it "return new safebox on success" do
       sendsecure_connection do |stubs|
         stubs.get("api/v2/safeboxes/new?user_email=user@acme.com&locale=en") { |env| [ 200, {}, ({ guid: "guid", public_encryption_key: "key", upload_url: "url"}).to_json ]}
       end
       allow_any_instance_of(SendSecure::JsonClient).to receive(:sendsecure_connection).and_return(sendsecure_connection)
-      safebox = client.new_safebox("user@acme.com")
+      safebox = client.initialize_safebox("user@acme.com")
       expect(safebox.has_key?("guid")).to be true
       expect(safebox.has_key?("public_encryption_key")).to be true
       expect(safebox.has_key?("upload_url")).to be true
@@ -44,7 +44,7 @@ describe SendSecure::JsonClient do
         stubs.get("api/v2/safeboxes/new?user_email=invalid_user@acme.com&locale=en") { |env| [ 403, {}, ({ message: "Access denied" }).to_json ]}
       end
       allow_any_instance_of(SendSecure::JsonClient).to receive(:sendsecure_connection).and_return(sendsecure_connection)
-      expect{ client.new_safebox("invalid_user@acme.com") }.to raise_error SendSecure::SendSecureException, "Access denied"
+      expect{ client.initialize_safebox("invalid_user@acme.com") }.to raise_error SendSecure::SendSecureException, "Access denied"
     end
   end
 

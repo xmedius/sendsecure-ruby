@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'sendsecure-ruby'
-  s.version     = '0.0.0'
+  s.version     = '1.0.0'
   s.date        = '2016-11-30'
   s.summary     = "sendsecure"
   s.description = "sendsecure"

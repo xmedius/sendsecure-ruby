@@ -9,7 +9,18 @@
     @sendsecure_endpoint
     @api_token
 
-
+    ###
+    # JsonClient object constructor. Used to make call to create a SendSecure
+    #
+    # @param api_token
+    #            The API Token to be used for authentication with the SendSecure service
+    # @param enterprise_account
+    #            The SendSecure enterprise account
+    # @param endpoint
+    #            The URL to the SendSecure service ("https://portal.xmedius.com" will be used by default if empty)
+    # @param locale
+    #            The locale in which the server errors will be returned ("en" will be used by default if empty)
+    ###
     def initialize(api_token, enterprise_account, endpoint = "https://portal.xmedius.com", locale = "en")
       @locale = locale
       @enterprise_account = enterprise_account
@@ -18,8 +29,28 @@
       @sendsecure_endpoint = get_sendsecure_endpoint
     end
 
-    # GET
-    def self.get_user_token(enterprise_account, username, password, device_id, device_name, application_type = "sendsecure-ruby", endpoint = "https://portal.xmedius.com", one_time_password = "")
+    ###
+    # Gets an API Token for a specific user within a SendSecure enterprise account.
+    #
+    # @param enterprise_account
+    #            The SendSecure enterprise account
+    # @param username
+    #            The username of a SendSecure user of the current enterprise account
+    # @param password
+    #            The password of this user
+    # @param device_id
+    #            The unique ID of the device used to get the Token
+    # @param device_name
+    #            The name of the device used to get the Token
+    # @param application_type
+    #            The type/name of the application used to get the Token ("SendSecure Ruby" will be used by default if empty)
+    # @param otp
+    #            The one-time password of this user (if any)
+    # @param endpoint
+    #            The URL to the SendSecure service ("https://portal.xmedius.com" will be used by default if empty)
+    # @return API Token to be used for the specified user
+    ###
+    def self.get_user_token(enterprise_account, username, password, device_id, device_name, application_type = "SendSecure Ruby", endpoint = "https://portal.xmedius.com", one_time_password = "")
       begin
         response = Faraday.post("#{endpoint}/api/user_token", permalink: enterprise_account, username: username, password: password,
                       otp: one_time_password, application_type: application_type, device_id: device_id, device_name: device_name)
@@ -38,31 +69,64 @@
       end
     end
 
-    # GET
-    def new_safebox(user_email)
+    ###
+    # Pre-creates a SafeBox on the SendSecure system and initializes the Safebox object accordingly.
+    #
+    # @param user_email
+    #            The email address of a SendSecure user of the current enterprise account
+    # @return The json containing the guid, public encryption key and upload url of the initialize SafeBox
+    ###
+    def initialize_safebox(user_email)
       handle_error { sendsecure_connection.get("api/v2/safeboxes/new?user_email=#{user_email}&locale=#{@locale}") }
     end
 
-    # POST
-    def upload_file(upload_url, filename_or_io, content_type, filename = nil)
+    ###
+    # Uploads the specified file as an Attachment of the specified SafeBox.
+    #
+    # @param upload_url
+    #            The url returned by the initializeSafeBox. Can be used multiple time
+    # @param filename_or_stream
+    #            The path of the file to upload or the stream
+    # @param content_type
+    #            The MIME content type of the uploaded file
+    # @return The json containing the guid of the uploaded file
+    ###
+    def upload_file(upload_url, filename_or_stream, content_type, filename = nil)
       handle_error do
         fileserver_connection(upload_url).post do |req|
-          req.body = { file: UploadIO.new(filename_or_io, content_type, filename) }
+          req.body = { file: UploadIO.new(filename_or_stream, content_type, filename) }
         end
       end
     end
 
-    # POST
+    ###
+    # Finalizes the creation (commit) of the SafeBox on the SendSecure system. This actually "Sends" the SafeBox with
+    # all content and contact info previously specified.
+    #
+    # @param safebox_json
+    #            The full json expected by the server
+    # @return The json containing the guid, preview url and encryption key of the created SafeBox
+    ###
     def commit_safebox(safebox_json)
       handle_error { sendsecure_connection.post("/api/v2/safeboxes", safebox_json) }
     end
 
-    # GET
+    ###
+    # Retrieves all available security profiles of the enterprise account for a specific user.
+    #
+    # @param user_email
+    #            The email address of a SendSecure user of the current enterprise account
+    # @return The json containing a list of Security Profile
+    ###
     def security_profiles(user_email)
       handle_error { sendsecure_connection.get("api/v2/enterprises/#{@enterprise_account}/security_profiles?user_email=#{user_email}&locale=#{@locale}") }
     end
 
-    # GET
+    ###
+    # Get the Enterprise Settings of the current enterprise account
+    #
+    # @return The json containing the enterprise settings
+    ###
     def enterprise_setting()
       handle_error { sendsecure_connection.get("api/v2/enterprises/#{@enterprise_account}/settings?locale=#{@locale}") }
     end
