@@ -1,10 +1,7 @@
 module SendSecure
+  class Value < JSONable
 
+    attr_reader :value, :modifiable
 
-    class Value < JSONable
-      attr_reader :value, :modifiable
-
-    end
-
-
+  end
 end

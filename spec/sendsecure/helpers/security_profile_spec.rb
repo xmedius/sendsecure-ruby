@@ -1,14 +1,32 @@
 require 'spec_helper'
 
 describe SendSecure::SecurityProfile do
-  let(:profile) { SendSecure::SecurityProfile.new( {"id"=>10, "name"=>"email-only", "description"=>"", "created_at"=>"2016-04-27T21:08:29.457Z", "updated_at"=>"2016-07-27T19:03:05.883Z",
-    "allowed_login_attempts"=>{"value"=>3, "modifiable"=>false}, "allow_remember_me"=>{"value"=>false, "modifiable"=>false}, "allow_sms"=>{"value"=>false, "modifiable"=>false},
-    "allow_voice"=>{"value"=>false, "modifiable"=>false}, "allow_email"=>{"value"=>true, "modifiable"=>false}, "code_time_limit"=>{"value"=>5, "modifiable"=>false},
-    "code_length"=>{"value"=>4, "modifiable"=>false}, "auto_extend_value"=>{"value"=>3, "modifiable"=>false}, "auto_extend_unit"=>{"value"=>"days", "modifiable"=>false},
-    "two_factor_required"=>{"value"=>true, "modifiable"=>false}, "encrypt_attachments"=>{"value"=>true, "modifiable"=>false}, "encrypt_message"=>{"value"=>false, "modifiable"=>false},
-    "expiration_value"=>{"value"=>7, "modifiable"=>false}, "expiration_unit"=>{"value"=>"hours", "modifiable"=>false}, "reply_enabled"=>{"value"=>true, "modifiable"=>false},
-    "group_replies"=>{"value"=>false, "modifiable"=>false}, "double_encryption"=>{"value"=>true, "modifiable"=>false}, "retention_period_type"=>{"value"=>"discard_at_expiration", "modifiable"=>false},
-    "retention_period_value"=>{"value"=>nil, "modifiable"=>false}, "retention_period_unit"=>{"value"=>nil, "modifiable"=>false}})
+  let(:profile) { SendSecure::SecurityProfile.new({ "id"=>10,
+                                                    "name"=>"email-only",
+                                                    "description"=>"",
+                                                    "created_at"=>"2016-04-27T21:08:29.457Z",
+                                                    "updated_at"=>"2016-07-27T19:03:05.883Z",
+                                                    "allowed_login_attempts"=>{"value"=>3, "modifiable"=>false},
+                                                    "allow_remember_me"=>{"value"=>false, "modifiable"=>false},
+                                                    "allow_sms"=>{"value"=>false, "modifiable"=>false},
+                                                    "allow_voice"=>{"value"=>false, "modifiable"=>false},
+                                                    "allow_email"=>{"value"=>true, "modifiable"=>false},
+                                                    "code_time_limit"=>{"value"=>5, "modifiable"=>false},
+                                                    "code_length"=>{"value"=>4, "modifiable"=>false},
+                                                    "auto_extend_value"=>{"value"=>3, "modifiable"=>false},
+                                                    "auto_extend_unit"=>{"value"=>"days", "modifiable"=>false},
+                                                    "two_factor_required"=>{"value"=>true, "modifiable"=>false},
+                                                    "encrypt_attachments"=>{"value"=>true, "modifiable"=>false},
+                                                    "encrypt_message"=>{"value"=>false, "modifiable"=>false},
+                                                    "expiration_value"=>{"value"=>7, "modifiable"=>false},
+                                                    "expiration_unit"=>{"value"=>"hours", "modifiable"=>false},
+                                                    "reply_enabled"=>{"value"=>true, "modifiable"=>false},
+                                                    "group_replies"=>{"value"=>false, "modifiable"=>false},
+                                                    "double_encryption"=>{"value"=>true, "modifiable"=>false},
+                                                    "retention_period_type"=>{"value"=>"discard_at_expiration", "modifiable"=>false},
+                                                    "retention_period_value"=>{"value"=>nil, "modifiable"=>false},
+                                                    "retention_period_unit"=>{"value"=>nil, "modifiable"=>false}
+                                                  })
     }
 
   it "create security profile with all the attributes" do
@@ -44,14 +62,32 @@ describe SendSecure::SecurityProfile do
   end
 
   it "serialize security profile" do
-    expect(profile.to_json).to eq({"securityprofile"=>{"id"=>10, "name"=>"email-only", "description"=>"", "created_at"=>"2016-04-27T21:08:29.457Z", "updated_at"=>"2016-07-27T19:03:05.883Z",
-        "allowed_login_attempts"=>{"value"=>3, "modifiable"=>false}, "allow_remember_me"=>{"value"=>false, "modifiable"=>false}, "allow_sms"=>{"value"=>false, "modifiable"=>false},
-        "allow_voice"=>{"value"=>false, "modifiable"=>false}, "allow_email"=>{"value"=>true, "modifiable"=>false}, "code_time_limit"=>{"value"=>5, "modifiable"=>false},
-        "code_length"=>{"value"=>4, "modifiable"=>false}, "auto_extend_value"=>{"value"=>3, "modifiable"=>false}, "auto_extend_unit"=>{"value"=>"days", "modifiable"=>false},
-        "two_factor_required"=>{"value"=>true, "modifiable"=>false}, "encrypt_attachments"=>{"value"=>true, "modifiable"=>false}, "encrypt_message"=>{"value"=>false, "modifiable"=>false},
-        "expiration_value"=>{"value"=>7, "modifiable"=>false}, "expiration_unit"=>{"value"=>"hours", "modifiable"=>false}, "reply_enabled"=>{"value"=>true, "modifiable"=>false},
-        "group_replies"=>{"value"=>false, "modifiable"=>false}, "double_encryption"=>{"value"=>true, "modifiable"=>false}, "retention_period_type"=>{"value"=>"discard_at_expiration", "modifiable"=>false},
-        "retention_period_value"=>{"value"=>nil, "modifiable"=>false}, "retention_period_unit"=>{"value"=>nil, "modifiable"=>false}}}
+    expect(profile.to_json).to eq({ "securityprofile"=>{
+                                      "id"=>10,
+                                      "name"=>"email-only",
+                                      "description"=>"",
+                                      "allowed_login_attempts"=>{ "value"=>3, "modifiable"=>false },
+                                      "allow_remember_me"=>{"value"=>false, "modifiable"=>false},
+                                      "allow_sms"=>{"value"=>false, "modifiable"=>false},
+                                      "allow_voice"=>{"value"=>false, "modifiable"=>false},
+                                      "allow_email"=>{"value"=>true, "modifiable"=>false},
+                                      "code_time_limit"=>{"value"=>5, "modifiable"=>false},
+                                      "code_length"=>{"value"=>4, "modifiable"=>false},
+                                      "auto_extend_value"=>{"value"=>3, "modifiable"=>false},
+                                      "auto_extend_unit"=>{"value"=>"days", "modifiable"=>false},
+                                      "two_factor_required"=>{"value"=>true, "modifiable"=>false},
+                                      "encrypt_attachments"=>{"value"=>true, "modifiable"=>false},
+                                      "encrypt_message"=>{"value"=>false, "modifiable"=>false},
+                                      "expiration_value"=>{"value"=>7, "modifiable"=>false},
+                                      "expiration_unit"=>{"value"=>"hours", "modifiable"=>false},
+                                      "reply_enabled"=>{"value"=>true, "modifiable"=>false},
+                                      "group_replies"=>{"value"=>false, "modifiable"=>false},
+                                      "double_encryption"=>{"value"=>true, "modifiable"=>false},
+                                      "retention_period_type"=>{"value"=>"discard_at_expiration", "modifiable"=>false},
+                                      "retention_period_value"=>{"value"=>nil, "modifiable"=>false},
+                                      "retention_period_unit"=>{"value"=>nil, "modifiable"=>false}
+                                    }
+                                  }
     )
   end
 
