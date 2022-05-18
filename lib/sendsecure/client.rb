@@ -53,7 +53,7 @@ module SendSecure
     #            The locale in which the server errors will be returned ("en" will be used by default if empty)
     ###
     def initialize(endpoint: "https://portal.xmedius.com", locale: "en", **options)
-      @json_client = JsonClient.new(options.merge({ endpoint: endpoint, locale: locale }))
+      @json_client = JsonClient.new(endpoint: endpoint, locale: locale, **options)
     end
 
   end
